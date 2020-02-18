@@ -68,7 +68,7 @@ TEST_P(XorBlocks, Examples) {
   const auto& exp = get<2>(GetParam());
   byte_array result;
   result.resize(b1.size());
-  xor_blocks(b1, b2, result);
+  xor_blocks(result.data(), b1.data(), b2.data(), b1.size());
   EXPECT_EQ(result, exp);
 }
 

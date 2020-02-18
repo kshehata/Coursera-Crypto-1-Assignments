@@ -27,16 +27,15 @@ string bytes2hex(const byte_array& in) {
 
   CryptoPP::word64 size = encoder.MaxRetrievable();
   if(size) {
-    result.resize(size);   
+    result.resize(size);
     encoder.Get((byte*)&result[0], result.size());
   }
   return result;
 }
 
-void xor_blocks(const byte_array& b1, const byte_array& b2, byte_array& out) {
-  // assume b1 and b2 are the same length. Up to caller to ensure that
-  out.resize(b1.size());
-  for (int i = 0; i < b1.size(); ++i) {
+void xor_blocks(unsigned char* out, const unsigned char* b1,
+  const unsigned char* b2, size_t len) {
+  for (int i = 0; i < len; ++i) {
     out[i] = b1[i] ^ b2[i];
   }
 }

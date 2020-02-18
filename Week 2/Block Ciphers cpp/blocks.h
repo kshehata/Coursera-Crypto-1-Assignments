@@ -3,6 +3,8 @@
 
 #include "utils.h"
 
-bool check_and_remove_pad(byte_array& m);
+bool check_and_remove_pad(string& m);
+
+string decrypt_cbc(const byte_array& key, const byte_array& ct);
 
 #endif  // BLOCKS_UTILS_H
