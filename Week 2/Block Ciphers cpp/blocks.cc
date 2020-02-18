@@ -47,7 +47,32 @@ string decrypt_cbc(const byte_array& key, const byte_array& ct) {
 
   for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
     d.ProcessString((byte*)&message[i], (byte*)&ct[i + BLOCK_SIZE], BLOCK_SIZE);
-    xor_blocks((unsigned char*)&message[i], &ct[i], (unsigned char*)&message[i], BLOCK_SIZE);
+    xor_blocks((unsigned char*)&message[i], &ct[i],
+      (unsigned char*)&message[i], BLOCK_SIZE);
+  }
+
+  check_and_remove_pad(message);
+  return message;
+}
+
+string decrypt_ctr(const byte_array& key, byte_array& ct) {
+  if (key.size() != BLOCK_SIZE) {
+    // TDDO: should throw an exception if key is wrong length
+    return "";
+  }
+  if (ct.size() < BLOCK_SIZE) {
+    return "";
+  }
+
+  string message;
+  message.resize(ct.size() - BLOCK_SIZE);
+  CryptoPP::ECB_Mode< CryptoPP::AES >::Encryption e(key.data(), key.size());
+
+  for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
+    e.ProcessString((byte*)&message[i], (byte*)ct.data(), BLOCK_SIZE);
+    xor_blocks((unsigned char*)&message[i], &ct[i + BLOCK_SIZE],
+      (unsigned char*)&message[i], ct.size() - i - BLOCK_SIZE);
+    inc_block(ct.data(), BLOCK_SIZE);
   }
 
   check_and_remove_pad(message);
