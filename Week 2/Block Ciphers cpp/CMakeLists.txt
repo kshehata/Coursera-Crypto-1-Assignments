@@ -14,5 +14,11 @@ add_executable(UtilsTest utils_test.cc)
 add_test(UtilsTest bin/UtilsTest)
 target_link_libraries(UtilsTest utils ${CONAN_LIBS})
 
+add_library(blocks_lib blocks.cc)
+
+add_executable(BlocksTest blocks_test.cc)
+add_test(BlocksTest bin/BlocksTest)
+target_link_libraries(BlocksTest blocks_lib utils ${CONAN_LIBS})
+
 add_executable(blocks main.cc)
-target_link_libraries(blocks utils ${CONAN_LIBS})
+target_link_libraries(blocks utils blocks_lib ${CONAN_LIBS})
