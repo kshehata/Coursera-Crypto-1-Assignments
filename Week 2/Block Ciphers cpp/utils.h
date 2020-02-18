@@ -17,4 +17,6 @@ string bytes2hex(const byte_array& in);
 void xor_blocks(unsigned char* out, const unsigned char* b1,
   const unsigned char* b2, size_t len);
 
+void inc_block(unsigned char* b, size_t len);
+
 #endif  // BLOCKS_UTILS_H

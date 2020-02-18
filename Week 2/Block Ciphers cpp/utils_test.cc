@@ -82,4 +82,49 @@ INSTANTIATE_TEST_SUITE_P(XorBlocksExamples,
                             byte_array{0x74, 0xf8, 0x14, 0xba})
                           ));
 
+class IncBlockTest : public TestWithParam<pair<byte_array, byte_array>> {
+ public:
+  ~IncBlockTest() override {}
+  void SetUp() override {}
+  void TearDown() override {}
+
+ protected:
+};
+
+TEST_P(IncBlockTest, Examples) {
+  auto b = get<0>(GetParam());
+  const auto& exp = get<1>(GetParam());
+  byte_array result;
+  result.resize(b.size());
+  inc_block(b.data(), b.size());
+  EXPECT_EQ(b, exp);
+}
+
+INSTANTIATE_TEST_SUITE_P(IncBlockTestExamples,
+                         IncBlockTest,
+                         testing::Values(
+                          make_pair(byte_array{}, byte_array{}),
+                          make_pair(byte_array{0x00}, byte_array{0x01}),
+                          make_pair(byte_array{0xff}, byte_array{0x00}),
+                          make_pair(byte_array{0xde, 0xad, 0xbe, 0xef},
+                            byte_array{0xde, 0xad, 0xbe, 0xf0}),
+                          make_pair(byte_array{0xde, 0xad, 0xbe, 0xff},
+                            byte_array{0xde, 0xad, 0xbf, 0x00}),
+                          make_pair(byte_array{0xef, 0xff, 0xff, 0xff},
+                            byte_array{0xf0, 0x00, 0x00, 0x00}),
+                          make_pair(byte_array{0xff, 0xff, 0xff, 0xff},
+                            byte_array{0x00, 0x00, 0x00, 0x00}),
+                          make_pair(byte_array{
+                            0xef, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+                            byte_array{
+                            0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}),
+                          make_pair(byte_array{
+                            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+                            byte_array{
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
+                          ));
 } // namespace testing

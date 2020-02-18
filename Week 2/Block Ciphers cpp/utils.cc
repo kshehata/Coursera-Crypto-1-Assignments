@@ -39,3 +39,10 @@ void xor_blocks(unsigned char* out, const unsigned char* b1,
     out[i] = b1[i] ^ b2[i];
   }
 }
+
+void inc_block(unsigned char* b, size_t len) {
+  if (len <= 0) return;
+  for (unsigned char* p = b + len - 1; p >= b; --p) {
+    if (++(*p) != 0) break;
+  }
+}
