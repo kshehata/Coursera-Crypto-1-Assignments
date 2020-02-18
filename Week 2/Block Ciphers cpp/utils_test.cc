@@ -41,7 +41,8 @@ INSTANTIATE_TEST_SUITE_P(HexConversionExamples,
                          testing::Values(
                           make_pair("", byte_array{}),
                           make_pair("00", byte_array{0x00}),
-                          make_pair("deadbeef", byte_array{0xde, 0xad, 0xbe, 0xef}),
+                          make_pair("deadbeef",
+                            byte_array{0xde, 0xad, 0xbe, 0xef}),
                           make_pair(
                             "aa55aa55deadbeef0011223344556677aa55aa55deadbeef0011223344556677",
                             byte_array{0xaa, 0x55, 0xaa, 0x55, 0xde, 0xad,
@@ -53,7 +54,8 @@ INSTANTIATE_TEST_SUITE_P(HexConversionExamples,
 
 
 
-class XorBlocks : public TestWithParam<tuple<byte_array, byte_array, byte_array>> {
+class XorBlocks
+    : public TestWithParam<tuple<byte_array, byte_array, byte_array>> {
  public:
   ~XorBlocks() override {}
   void SetUp() override {}
@@ -76,7 +78,8 @@ INSTANTIATE_TEST_SUITE_P(XorBlocksExamples,
                          XorBlocks,
                          testing::Values(
                           make_tuple(byte_array{}, byte_array{}, byte_array{}),
-                          make_tuple(byte_array{0x00}, byte_array{0x00}, byte_array{0x00}),
+                          make_tuple(byte_array{0x00}, byte_array{0x00},
+                            byte_array{0x00}),
                           make_tuple(byte_array{0xde, 0xad, 0xbe, 0xef},
                             byte_array{0xaa, 0x55, 0xaa, 0x55},
                             byte_array{0x74, 0xf8, 0x14, 0xba})
