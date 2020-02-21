@@ -132,8 +132,8 @@ byte_array CTR::encrypt(const string& m, const unsigned char* iv) {
 
   for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
     e.ProcessString((byte*)t.data(), (byte*)ctr.data(), BLOCK_SIZE);
-    xor_blocks((unsigned char*)&ct[i + BLOCK_SIZE], t.data(),
-      (unsigned char*)&m[i], std::min(BLOCK_SIZE, ct.size() - i - BLOCK_SIZE));
+    xor_blocks(&ct[i + BLOCK_SIZE], t.data(), (unsigned char*)&m[i],
+      std::min(BLOCK_SIZE, ct.size() - i - BLOCK_SIZE));
     inc_block(ctr.data(), BLOCK_SIZE);
   }
 
