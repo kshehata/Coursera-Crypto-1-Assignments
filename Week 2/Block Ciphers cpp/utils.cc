@@ -3,33 +3,27 @@
 #include <cstdlib>
 #include <cryptopp/hex.h>
 
+namespace block_cipher {
+
 using CryptoPP::byte;
 
 byte_array hex2bytes(const string& in) {
   byte_array result;
-  CryptoPP::HexDecoder decoder;
-  decoder.Put( (byte*)in.data(), in.size() );
-  decoder.MessageEnd();
 
-  CryptoPP::word64 size = decoder.MaxRetrievable();
-  if(size && size <= SIZE_MAX) {
-    result.resize(size);   
-    decoder.Get((byte*)&result[0], result.size());
-  }
+  CryptoPP::StringSource ss(in, true,
+    new CryptoPP::HexDecoder(
+      new CryptoPP::StringSinkTemplate<byte_array>(result)));
+
   return result;
 }
 
 string bytes2hex(const byte_array& in) {
   string result;
-  CryptoPP::HexEncoder encoder(NULL, false);
-  encoder.Put(in.data(), in.size());
-  encoder.MessageEnd();
 
-  CryptoPP::word64 size = encoder.MaxRetrievable();
-  if(size) {
-    result.resize(size);
-    encoder.Get((byte*)&result[0], result.size());
-  }
+  CryptoPP::StringSource ss(in.data(), in.size(), true,
+    new CryptoPP::HexEncoder(
+      new CryptoPP::StringSink(result), false));
+
   return result;
 }
 
@@ -46,3 +40,5 @@ void inc_block(unsigned char* b, size_t len) {
     if (++(*p) != 0) break;
   }
 }
+
+} // namespace block_cipher

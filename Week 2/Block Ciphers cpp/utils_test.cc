@@ -8,9 +8,11 @@ using std::pair;
 using std::make_pair;
 using std::string;
 using std::tuple;
+using ::testing::get;
 using ::testing::TestWithParam;
 using ::testing::Values;
 
+namespace block_cipher {
 namespace testing {
 
 class HexConversion : public TestWithParam<pair<string, byte_array>> {
@@ -38,7 +40,7 @@ TEST_P(HexConversion, Bytes2Hex) {
 
 INSTANTIATE_TEST_SUITE_P(HexConversionExamples,
                          HexConversion,
-                         testing::Values(
+                         Values(
                           make_pair("", byte_array{}),
                           make_pair("00", byte_array{0x00}),
                           make_pair("deadbeef",
@@ -76,7 +78,7 @@ TEST_P(XorBlocks, Examples) {
 
 INSTANTIATE_TEST_SUITE_P(XorBlocksExamples,
                          XorBlocks,
-                         testing::Values(
+                         Values(
                           make_tuple(byte_array{}, byte_array{}, byte_array{}),
                           make_tuple(byte_array{0x00}, byte_array{0x00},
                             byte_array{0x00}),
@@ -105,7 +107,7 @@ TEST_P(IncBlockTest, Examples) {
 
 INSTANTIATE_TEST_SUITE_P(IncBlockTestExamples,
                          IncBlockTest,
-                         testing::Values(
+                         Values(
                           make_pair(byte_array{}, byte_array{}),
                           make_pair(byte_array{0x00}, byte_array{0x01}),
                           make_pair(byte_array{0xff}, byte_array{0x00}),
@@ -130,4 +132,6 @@ INSTANTIATE_TEST_SUITE_P(IncBlockTestExamples,
                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00})
                           ));
+
+} // namespace block_cipher
 } // namespace testing

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 
+using namespace block_cipher;
 using std::cin;
 using std::cout;
 using std::endl;
@@ -24,11 +25,11 @@ int main(int argc, const char * argv[]) {
     return 1;
   }
 
-  unique_ptr<block_cipher::BlockCipher> cipher;
+  unique_ptr<BlockCipher> cipher;
   if (!string("CBC").compare(argv[1])) {
-    cipher = make_unique<block_cipher::CBC>();
+    cipher = make_unique<CBC>();
   } else if (!string("CTR").compare(argv[1])) {
-    cipher = make_unique<block_cipher::CTR>();
+    cipher = make_unique<CTR>();
   }
 
   string line;

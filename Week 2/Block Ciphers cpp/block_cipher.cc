@@ -7,8 +7,7 @@
 
 using CryptoPP::byte;
 
-namespace block_cipher
-{
+namespace block_cipher {
 
 const string CBC::NAME = "CBC-AES";
 const string CTR::NAME = "CTR-AES";
