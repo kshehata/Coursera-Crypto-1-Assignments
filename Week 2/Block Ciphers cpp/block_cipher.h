@@ -6,7 +6,7 @@
 
 namespace block_cipher {
 
-constexpr int BLOCK_SIZE = 16;
+constexpr size_t BLOCK_SIZE = 16;
 
 // Generic base class for all block ciphers. Assumes AES is used under CBC or
 // CTR mode, thus block size fixed to 16-bytes and 16-byte key expected.

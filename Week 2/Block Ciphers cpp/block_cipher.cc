@@ -84,7 +84,8 @@ byte_array CBC::encrypt(const string& m, const unsigned char* iv) {
   for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
     if ((m.size() - i) < BLOCK_SIZE) {
       // need to copy the last block of message to add pad
-      std::copy(m.cbegin() + i, m.cend(), ct.begin() + i + BLOCK_SIZE);
+      std::copy(std::next(m.cbegin(), i), m.cend(),
+        std::next(ct.begin(), i + BLOCK_SIZE));
       add_pad(&ct[i + BLOCK_SIZE], m.size() - i);
       xor_blocks(&ct[i + BLOCK_SIZE], &ct[i + BLOCK_SIZE], &ct[i], BLOCK_SIZE);
     } else {
@@ -111,7 +112,7 @@ string CTR::decrypt(const byte_array& ct) {
   for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
     e.ProcessString((byte*)t.data(), (byte*)ctr.data(), BLOCK_SIZE);
     xor_blocks((unsigned char*)&message[i], t.data(), &ct[i + BLOCK_SIZE],
-      ct.size() - i - BLOCK_SIZE);
+      std::min(BLOCK_SIZE, ct.size() - i - BLOCK_SIZE));
     inc_block(ctr.data(), BLOCK_SIZE);
   }
 
