@@ -26,20 +26,37 @@ using std::make_unique;
 using std::string;
 using std::unique_ptr;
 
+void usage(const string& name) {
+  cout << "Usage: " << name << "[enc|dec] [mode]" << endl;
+  cout << "Mode can be CBC or CTR" << endl;
+  cout << "Key is first line parsed from stdin, with CT read one per line"
+    << endl;
+}
+
 int main(int argc, const char * argv[]) {
-  if (argc != 2) {
-    cout << "Usage: " << argv[0] << " [mode]" << endl;
-    cout << "Mode can be CBC or CTR" << endl;
-    cout << "Key is first line parsed from stdin, with CT read one per line"
-      << endl;
+  if (argc != 3) {
+    usage(argv[0]);
     return 1;
   }
 
+  bool encrypt = false;
+  if (!string("enc").compare(argv[1])) {
+    encrypt = true;
+  } else if (!string("dec").compare(argv[1])) {
+    encrypt = false;
+  } else {
+    usage(argv[0]);
+    return 2;
+  }
+
   unique_ptr<BlockCipher> cipher;
-  if (!string("CBC").compare(argv[1])) {
+  if (!string("CBC").compare(argv[2])) {
     cipher = make_unique<CBC>();
-  } else if (!string("CTR").compare(argv[1])) {
+  } else if (!string("CTR").compare(argv[2])) {
     cipher = make_unique<CTR>();
+  } else {
+    usage(argv[0]);
+    return 3;
   }
 
   string line;
@@ -47,7 +64,17 @@ int main(int argc, const char * argv[]) {
   cipher->set_key(hex2bytes(line));
 
   while(getline(cin, line)) {
-    byte_array ct = hex2bytes(line);
+    byte_array ct;
+    string m;
+
+    if (encrypt) {
+      m = line;
+      ct = cipher->encrypt(m);
+    } else {
+      ct = hex2bytes(line);
+      m = cipher->decrypt(ct);
+    }
+
     cout << "Key: " << bytes2hex(cipher->get_key()) << endl;
     cout << "CT : " << bytes2hex(ct) << endl;
     cout << "MT : " << cipher->decrypt(ct) << endl;
