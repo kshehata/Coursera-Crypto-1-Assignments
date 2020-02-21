@@ -1,43 +1,47 @@
 //  Created by Kareem Shehata on 2020-02-17.
 //  Copyright © 2020 Kareem Shehata. All rights reserved.
 
+#include "block_cipher.h"
 #include "utils.h"
 
-#include <cryptopp/aes.h>
-#include <cryptopp/filters.h>
-#include <cryptopp/modes.h>
 #include <iostream>
 #include <string>
 
+using std::cin;
+using std::cout;
+using std::endl;
+using std::getline;
+using std::make_unique;
 using std::string;
-
-string decrypt(byte_array key, byte_array ct) {
-  string message;
-  CryptoPP::CBC_Mode< CryptoPP::AES >::Decryption d(key.data(), key.size(), ct.data());
-
-  CryptoPP::StringSource ss( &ct[16], ct.size() - 16, true, 
-      new CryptoPP::StreamTransformationFilter( d,
-          new CryptoPP::StringSink( message )
-      ) // StreamTransformationFilter
-  ); // StringSource
-
-  return message;
-}
+using std::unique_ptr;
 
 int main(int argc, const char * argv[]) {
-  if (argc < 3) {
-    std::cout << "Usage: " << argv[0] << " [key] [ciphertext]" << std::endl;
+  if (argc != 2) {
+    cout << "Usage: " << argv[0] << " [mode]" << endl;
+    cout << "Mode can be CBC or CTR" << endl;
+    cout << "Key is first input parsed from stdin, with CT read one per line"
+      << endl;
     return 1;
   }
 
-  byte_array key = hex2bytes(argv[1]);
-  byte_array ct = hex2bytes(argv[2]);
+  unique_ptr<block_cipher::BlockCipher> cipher;
+  if (!string("CBC").compare(argv[1])) {
+    cipher = make_unique<block_cipher::CBC>();
+  } else if (!string("CTR").compare(argv[1])) {
+    cipher = make_unique<block_cipher::CTR>();
+  }
 
-  std::cout << "Key:  " << bytes2hex(key) << std::endl;
-  std::cout << "CT:  " << bytes2hex(ct) << std::endl;
+  string line;
+  getline(cin, line);
+  cipher->set_key(hex2bytes(line));
 
-  auto message = decrypt(key, ct);
-  std::cout << "Message: " << message;
+  while(getline(cin, line)) {
+    byte_array ct = hex2bytes(line);
+    cout << "Key: " << bytes2hex(cipher->get_key()) << endl;
+    cout << "CT : " << bytes2hex(ct) << endl;
+    cout << "MT : " << cipher->decrypt(ct) << endl;
+    cout << endl;
+  }
 
   return 0;
 }
