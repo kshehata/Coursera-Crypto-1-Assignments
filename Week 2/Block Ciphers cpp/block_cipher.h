@@ -35,8 +35,11 @@ public:
   // Decrypt a ciphertext to message. Implemented by concrete classes.
   virtual string decrypt(const byte_array& ct) = 0;
 
-  // Encrypt a message to ciphertext. Implemented by concrete classes.
-  virtual byte_array encrypt(const byte_array& m) = 0;
+  // Encrypt a message to ciphertext. Generates a random IV.
+  virtual byte_array encrypt(const string& m) { return {}; };
+
+  // Encrypt a message to ciphertext using the given IV.
+  virtual byte_array encrypt(const string& m, const unsigned char* iv) = 0;
 
 protected:
   // key to use for encryption
@@ -62,11 +65,15 @@ public:
 
   string decrypt(const byte_array& ct) override;
 
-  byte_array encrypt(const byte_array& m) override;
+  byte_array encrypt(const string& m, const unsigned char* iv) override;
 
   // Utility function to remove block pad. Returns true if pad is valid,
   // false otherwise. If pad is invalid, string is not modified.
   static bool check_and_remove_pad(string& m);
+
+  // Utility function to add block pad to the end of an array. Array must
+  // already be allocated to BLOCK_SIZE. Len is the current length of data.
+  static void add_pad(unsigned char* b, size_t len);
 };
 
 // Concrete class implementation of CTR-AES BlockCipher
@@ -81,7 +88,7 @@ public:
 
   string decrypt(const byte_array& ct) override;
 
-  byte_array encrypt(const byte_array& m) override;
+  byte_array encrypt(const string& m, const unsigned char* iv) override;
 };
 
 } // namespace block_cipher

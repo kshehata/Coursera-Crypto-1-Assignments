@@ -1,6 +1,7 @@
 #include "block_cipher.h"
 
 #include "utils.h"
+#include <algorithm>
 #include <cryptopp/aes.h>
 #include <cryptopp/filters.h>
 #include <cryptopp/modes.h>
@@ -32,6 +33,13 @@ bool CBC::check_and_remove_pad(string& m) {
   return true;
 }
 
+void CBC::add_pad(unsigned char* b, size_t len) {
+  unsigned char p = BLOCK_SIZE - len;
+  for (unsigned char* c = b + len; c < b + BLOCK_SIZE; ++c) {
+    (*c) = p;
+  }
+}
+
 string CBC::decrypt(const byte_array& ct) {
   check_key_set();
 
@@ -54,8 +62,28 @@ string CBC::decrypt(const byte_array& ct) {
   return message;
 }
 
-byte_array CBC::encrypt(const byte_array& m) {
-  return {};
+byte_array CBC::encrypt(const string& m, const unsigned char* iv) {
+  check_key_set();
+
+  byte_array ct(iv, iv + BLOCK_SIZE);
+  ct.resize(((m.size() + 1)/BLOCK_SIZE + 2) * BLOCK_SIZE);
+
+  CryptoPP::ECB_Mode< CryptoPP::AES >::Encryption e(key_.data(), key_.size());
+
+  for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
+    if ((m.size() - i) < BLOCK_SIZE) {
+      // need to copy the last block of message to add pad
+      std::copy(m.cbegin() + i, m.cend(), ct.begin() + i + BLOCK_SIZE);
+      add_pad(&ct[i + BLOCK_SIZE], m.size() - i);
+      xor_blocks(&ct[i + BLOCK_SIZE], &ct[i + BLOCK_SIZE], &ct[i], BLOCK_SIZE);
+    } else {
+      xor_blocks(&ct[i + BLOCK_SIZE], (unsigned char*)&m[i], &ct[i],
+        BLOCK_SIZE);
+    }
+    e.ProcessString((byte*)&ct[i + BLOCK_SIZE], (byte*)&ct[i + BLOCK_SIZE],
+      BLOCK_SIZE);
+  }
+  return ct;
 }
 
 string CTR::decrypt(const byte_array& ct) {
@@ -79,8 +107,25 @@ string CTR::decrypt(const byte_array& ct) {
   return message;
 }
 
-byte_array CTR::encrypt(const byte_array& m) {
-  return {};
+byte_array CTR::encrypt(const string& m, const unsigned char* iv) {
+  check_key_set();
+
+  byte_array ct(iv, iv + BLOCK_SIZE);
+  ct.resize(m.size() + BLOCK_SIZE);
+  byte_array ctr(iv, iv + BLOCK_SIZE);
+  byte_array t;
+  t.resize(BLOCK_SIZE);
+
+  CryptoPP::ECB_Mode< CryptoPP::AES >::Encryption e(key_.data(), key_.size());
+
+  for (int i = 0; i < ct.size() - BLOCK_SIZE; i += BLOCK_SIZE) {
+    e.ProcessString((byte*)t.data(), (byte*)ctr.data(), BLOCK_SIZE);
+    xor_blocks((unsigned char*)&ct[i + BLOCK_SIZE], t.data(),
+      (unsigned char*)&m[i], ct.size() - i - BLOCK_SIZE);
+    inc_block(ctr.data(), BLOCK_SIZE);
+  }
+
+  return ct;
 }
 
 }
