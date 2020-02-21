@@ -8,8 +8,6 @@ using std::string;
 
 typedef std::vector<unsigned char> byte_array;
 
-constexpr int BLOCK_SIZE = 16;
-
 byte_array hex2bytes(const string& in);
 
 string bytes2hex(const byte_array& in);

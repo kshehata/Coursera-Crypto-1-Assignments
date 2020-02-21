@@ -3,6 +3,8 @@
 
 #include "utils.h"
 
+constexpr int BLOCK_SIZE = 16;
+
 bool check_and_remove_pad(string& m);
 
 string decrypt_cbc(const byte_array& key, const byte_array& ct);

@@ -75,6 +75,5 @@ string decrypt_ctr(const byte_array& key, byte_array& ct) {
     inc_block(ct.data(), BLOCK_SIZE);
   }
 
-  check_and_remove_pad(message);
   return message;
 }
