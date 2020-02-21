@@ -5,6 +5,7 @@
 #include <cryptopp/aes.h>
 #include <cryptopp/filters.h>
 #include <cryptopp/modes.h>
+#include <cryptopp/osrng.h>
 
 using CryptoPP::byte;
 
@@ -12,6 +13,16 @@ namespace block_cipher {
 
 const string CBC::NAME = "CBC-AES";
 const string CTR::NAME = "CTR-AES";
+
+byte_array BlockCipher::encrypt(const string& m) {
+  CryptoPP::AutoSeededRandomPool prng;
+
+  byte_array iv;
+  iv.resize(BLOCK_SIZE);
+  prng.GenerateBlock(iv.data(), iv.size());
+
+  return encrypt(m, iv.data());
+}
 
 bool CBC::check_and_remove_pad(string& m) {
   if (m.size() <= 0) {

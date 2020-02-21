@@ -5,7 +5,9 @@
 
 using std::pair;
 using std::make_pair;
+using std::make_unique;
 using std::tuple;
+using std::unique_ptr;
 using ::testing::get;
 using ::testing::TestWithParam;
 using ::testing::Values;
@@ -205,9 +207,37 @@ TEST(EncryptCTRTest, Encrypt) {
   cipher.set_key(key);
   const auto result = cipher.encrypt(m, exp_ct.data());
 
-  std::cout << "ACT CT = " << bytes2hex(result) << std::endl;
-  std::cout << "EXP CT = " << bytes2hex(exp_ct) << std::endl;
   EXPECT_EQ(exp_ct, result);
+}
+
+TEST(EncryptCBCTest, EncryptDecrypt) {
+  const byte_array key = {
+    0x14, 0x0b, 0x41, 0xb2, 0x2a, 0x29, 0xbe, 0xb4,
+    0x06, 0x1b, 0xda, 0x66, 0xb6, 0x74, 0x7e, 0x14};
+
+  const string m = "This is just some random string, really. Really Random.";
+
+  unique_ptr<BlockCipher> cipher = make_unique<CBC>();
+  cipher->set_key(key);
+  const auto ct = cipher->encrypt(m);
+  const auto result = cipher->decrypt(ct);
+
+  EXPECT_EQ(m, result);
+}
+
+TEST(EncryptCTRTest, EncryptDecrypt) {
+  const byte_array key = {
+    0x14, 0x0b, 0x41, 0xb2, 0x2a, 0x29, 0xbe, 0xb4,
+    0x06, 0x1b, 0xda, 0x66, 0xb6, 0x74, 0x7e, 0x14};
+
+  const string m = "This is just some random string, really. Really Random.";
+
+  unique_ptr<BlockCipher> cipher = make_unique<CTR>();
+  cipher->set_key(key);
+  const auto ct = cipher->encrypt(m);
+  const auto result = cipher->decrypt(ct);
+
+  EXPECT_EQ(m, result);
 }
 
 } // namespace testing

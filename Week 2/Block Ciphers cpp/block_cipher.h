@@ -36,7 +36,7 @@ public:
   virtual string decrypt(const byte_array& ct) = 0;
 
   // Encrypt a message to ciphertext. Generates a random IV.
-  virtual byte_array encrypt(const string& m) { return {}; };
+  virtual byte_array encrypt(const string& m);
 
   // Encrypt a message to ciphertext using the given IV.
   virtual byte_array encrypt(const string& m, const unsigned char* iv) = 0;
