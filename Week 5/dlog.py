@@ -24,9 +24,12 @@ def dlog(g, h, p, n=40):
     left_half_table[l] = x
     l = (l * inv_g) % p
 
+  # print left_half_table
+
   base = gmpy2.powmod(g, B, p)
   r = base
   for x in range(0, B + 1):
+    # print "Looking for value %s (%d) in hash table" % (str(r), x)
     if left_half_table.has_key(r):
       return (x + 1) * B + left_half_table[r]
     r = gmpy2.t_mod(r*base, p)
