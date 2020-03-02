@@ -97,7 +97,7 @@ def run_tests():
 if __name__ == "__main__":
   if len(sys.argv) == 2 and sys.argv[1] == "test":
     run_tests()
-  if len(sys.argv) == 2 and sys.argv[1] == "example":
+  elif len(sys.argv) == 2 and sys.argv[1] == "example":
     g = '11717829880366207009516117596335367088558084999998952205' \
       + '59997945906392949973658374667057217647146031292859482967' \
       + '5428279466566527115212748467589894601965568'
