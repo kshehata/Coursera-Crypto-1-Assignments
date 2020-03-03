@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Exercises from Week 3 of Coursera's Crypto course
+# Exercises from Week 3 of Crypto course
 # Copyright 2020 Kareem Shehata
 #
 # Implements a function that hashes 1kb blocks of a file (assumed to be a video)

@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Exercises from Week 5 of Coursera's Crypto course
+# Exercises from Week 5 of Crypto course
 # Copyright 2020 Kareem Shehata
 #
 # Uses a meet-in-the-middle strategy to calculate the discrete log of a number

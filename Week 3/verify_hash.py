@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Exercises from Week 3 of Coursera's Crypto course
+# Exercises from Week 3 of Crypto course
 # Copyright 2020 Kareem Shehata
 #
 # Verifies the hashes of a video file with hashes of the next block added at 

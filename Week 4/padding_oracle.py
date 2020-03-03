@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Exercises from Week 4 of Coursera's Crypto course
+# Exercises from Week 4 of Crypto course
 # Copyright 2020 Kareem Shehata
 #
 # Decrypts a given ciphertext by querying a "padding oracle", web services that

@@ -1,5 +1,5 @@
 #! /usr/bin/python
-# Exercises from Week 2 of Coursera's Crypto course
+# Exercises from Week 2 of Crypto course
 # Copyright 2020 Kareem Shehata
 
 import binascii
