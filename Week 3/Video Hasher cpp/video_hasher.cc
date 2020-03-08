@@ -90,4 +90,35 @@ string hash_file(istream& input_file, ostream& output_file) {
   return last_hash;
 }
 
+bool verify_hashes(istream& input_file, string last_hash) {
+  input_file.seekg(0, std::ios_base::end);
+  const auto end = input_file.tellg();
+  input_file.seekg(0, std::ios_base::beg);
+  const auto beg = input_file.tellg();
+  const auto len = end - beg;
+
+  string block_buffer;
+  block_buffer.resize(BLOCK_SIZE);
+  string hash;
+  hash.resize(CryptoPP::SHA256::DIGESTSIZE);
+  bool ok = true;
+
+  while(!input_file.eof()) {
+    auto remain = end - input_file.tellg();
+    if (remain < BLOCK_SIZE + CryptoPP::SHA256::DIGESTSIZE) {
+      input_file.read((char*)block_buffer.data(), remain);
+      string received_hash = hash_block(block_buffer, remain, "");
+      ok = ok && !last_hash.compare(received_hash);
+      break;
+    }
+
+    input_file.read((char*)block_buffer.data(), block_buffer.size());
+    input_file.read((char*)hash.data(), hash.size());
+    string received_hash = hash_block(block_buffer, block_buffer.size(), hash);
+    ok = ok && !last_hash.compare(received_hash);
+    last_hash = hash;
+  }
+  return ok;
+}
+
 } // namespace video_hasher
